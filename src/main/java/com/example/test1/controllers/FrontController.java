@@ -1,0 +1,12 @@
+package com.example.test1.controllers;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@Controller
+public class FrontController {
+    @RequestMapping(value = "/{path:[^\\.]*}")
+    public String forward() {
+        return "forward:/index.html";
+    }
+}
