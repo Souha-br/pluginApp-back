@@ -29,18 +29,23 @@ public class WebSecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity security) throws Exception {
-        return security.csrf().disable()
-                .authorizeHttpRequests()
-                .antMatchers("/signup","/login").permitAll()
+        return security
+                .cors()
                 .and()
-                .authorizeHttpRequests().antMatchers("/api/**")
-                .authenticated()
+                .csrf().disable()
+                .authorizeHttpRequests()
+                .antMatchers("/signup", "/login").permitAll()
+                .antMatchers("/api/jira/sync").permitAll() //to allow access without authentication just for connection test
+                .antMatchers("/api/**").authenticated()
+                .anyRequest().authenticated()
                 .and()
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and().addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
+                .and()
+                .addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
 
     @Bean
     public PasswordEncoder passwordEncoder(){

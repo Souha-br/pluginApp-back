@@ -1,7 +1,7 @@
 package com.example.test1.services.jwt;
 
-import com.example.test1.entities.User;
-import com.example.test1.repositories.UserRepository;
+import com.example.test1.entities.primary.User;
+import com.example.test1.repositories.primary.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
