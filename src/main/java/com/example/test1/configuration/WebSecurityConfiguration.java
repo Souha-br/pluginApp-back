@@ -1,10 +1,12 @@
 package com.example.test1.configuration;
 
+import com.example.test1.authentication.JiraAuthenticationProvider;
 import com.example.test1.filters.JwtRequestFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -21,10 +23,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfiguration {
 
     private final JwtRequestFilter jwtRequestFilter;
+    private final JiraAuthenticationProvider jiraAuthenticationProvider;
 
     @Autowired
-    public WebSecurityConfiguration(JwtRequestFilter jwtRequestFilter) {
+    public WebSecurityConfiguration(JwtRequestFilter jwtRequestFilter, JiraAuthenticationProvider jiraAuthenticationProvider) {
         this.jwtRequestFilter = jwtRequestFilter;
+        this.jiraAuthenticationProvider = jiraAuthenticationProvider;
     }
 
     @Bean
@@ -34,8 +38,7 @@ public class WebSecurityConfiguration {
                 .and()
                 .csrf().disable()
                 .authorizeHttpRequests()
-                .antMatchers("/signup", "/login").permitAll()
-                .antMatchers("/api/jira/sync").permitAll() //to allow access without authentication just for connection test
+                .antMatchers("/signup", "/login", "/api/jira/sync").permitAll()
                 .antMatchers("/api/**").authenticated()
                 .anyRequest().authenticated()
                 .and()
@@ -46,6 +49,10 @@ public class WebSecurityConfiguration {
                 .build();
     }
 
+    @Autowired
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
+        auth.authenticationProvider(jiraAuthenticationProvider);
+    }
 
     @Bean
     public PasswordEncoder passwordEncoder(){
@@ -53,7 +60,8 @@ public class WebSecurityConfiguration {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-        return  configuration.getAuthenticationManager();
+    public AuthenticationManager authenticationManager
+            (AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
     }
 }
