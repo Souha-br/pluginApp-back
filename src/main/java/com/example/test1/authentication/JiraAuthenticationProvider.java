@@ -31,9 +31,7 @@ public class JiraAuthenticationProvider implements AuthenticationProvider {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
 
-        // Valider les identifiants via l'API Jira
         if (jiraApiService.validateCredentials(username, password)) {
-            // Charger les détails de l'utilisateur
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
             return new UsernamePasswordAuthenticationToken(
                     userDetails, password, userDetails.getAuthorities());
