@@ -21,7 +21,6 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public boolean createUser(SignupRequest signupRequest) {
-        // Check if user already exists
         if (userRepository.existsByemail(signupRequest.getEmail())) {
             return false;
         }
@@ -29,13 +28,12 @@ public class AuthServiceImpl implements AuthService {
         User user = new User();
         BeanUtils.copyProperties(signupRequest, user);
 
-        // Hash the password before saving
         String hashPassword = passwordEncoder.encode(signupRequest.getPassword());
         user.setPassword(hashPassword);
 
         userRepository.save(user);
 
-        return true; // Return true after successful save
+        return true;
     }
 
 
